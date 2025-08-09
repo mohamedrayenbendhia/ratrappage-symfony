@@ -89,7 +89,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // Ensure every user has at least ROLE_USER
+        
+        // Si l'utilisateur n'a aucun rôle spécifique, lui donner ROLE_USER par défaut
+        if (empty($roles) || (count($roles) === 1 && in_array('ROLE_USER', $roles))) {
+            $roles[] = 'ROLE_USER';
+        }
+        
         return array_unique($roles);
     }
 

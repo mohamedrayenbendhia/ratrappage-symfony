@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Profile{% endblock %}
+{% block title %}Mon Profil{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -69,16 +69,6 @@
             font-size: 24px;
             font-weight: 600;
             margin: 15px 0 5px;
-        }
-        
-        .profile-role {
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 12px;
-            border-radius: 15px;
-            display: inline-block;
-            margin-bottom: 10px;
-            font-weight: 500;
         }
         
         .profile-email {
@@ -194,17 +184,6 @@
                 {% endif %}
             </div>
             <div class="profile-name">{{ user.name }}</div>
-            <div class="profile-role">
-                {% set primaryRole = '' %}
-                {% if 'ROLE_SUPER_ADMIN' in user.roles %}
-                    {% set primaryRole = 'Super Admin' %}
-                {% elseif 'ROLE_ADMIN' in user.roles %}
-                    {% set primaryRole = 'Admin' %}
-                {% else %}
-                    {% set primaryRole = 'Client' %}
-                {% endif %}
-                {{ primaryRole }}
-            </div>
             <div class="profile-email">{{ user.email }}</div>
         </div>
         
@@ -212,11 +191,11 @@
         <div class="profile-form">
             {% if app.user and 'ROLE_USER' in app.user.roles and 'ROLE_ADMIN' not in app.user.roles and 'ROLE_SUPER_ADMIN' not in app.user.roles %}
                 <a href="{{ path('app_client_dashboard') }}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Back to dashboard
+                    <i class="fas fa-arrow-left"></i> Retour au dashboard
                 </a>
             {% else %}
                 <a href="{{ path('app_user_index') }}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Back to list
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
                 </a>
             {% endif %}
             
@@ -229,47 +208,45 @@
                 {% endfor %}
             {% endfor %}
             
-            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+            {{ form_start(form) }}
                 <div class="form-group">
-                    {{ form_label(form.imageFile, 'Profile Picture', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
-                    {% if form.imageFile.vars.help %}
-                        <div class="form-help">{{ form.imageFile.vars.help }}</div>
-                    {% else %}
-                        <div class="form-help">Accepted formats: JPEG, PNG, GIF. Max size: 5MB</div>
+                    {{ form_label(form.image, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.image) }}
+                    {% if form.image.vars.help %}
+                        <div class="form-help">{{ form.image.vars.help }}</div>
                     {% endif %}
                     <div class="image-preview" id="imagePreview" style="display: none;">
-                        <img id="previewImg" src="" alt="Preview">
+                        <img id="previewImg" src="" alt="Aperçu">
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    {{ form_label(form.name, 'Name', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Your full name'}}) }}
+                    {{ form_label(form.name, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.name) }}
                 </div>
                 
                 <div class="form-group">
                     {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'your@email.com'}}) }}
+                    {{ form_widget(form.email) }}
                 </div>
                 
                 <div class="form-group">
-                    {{ form_label(form.phoneNumber, 'Phone', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': '12345678'}}) }}
+                    {{ form_label(form.phoneNumber, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.phoneNumber) }}
                 </div>
                 
                 <div class="form-group">
-                    {{ form_label(form.plainPassword.first, 'New Password', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Leave blank to keep current password'}}) }}
+                    {{ form_label(form.plainPassword.first, 'Nouveau mot de passe', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.plainPassword.first) }}
                 </div>
                 
                 <div class="form-group">
-                    {{ form_label(form.plainPassword.second, 'Confirm Password', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Repeat new password'}}) }}
+                    {{ form_label(form.plainPassword.second, 'Confirmer le mot de passe', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.plainPassword.second) }}
                 </div>
                 
                 <button type="submit" class="btn-update">
-                    <i class="fas fa-save"></i> Update Profile
+                    <i class="fas fa-save"></i> Mettre à jour le profil
                 </button>
             {{ form_end(form) }}
         </div>
@@ -278,35 +255,31 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const imageInput = document.getElementById('profile_imageFile');
+    const imageInput = document.getElementById('profile_image');
     const previewContainer = document.getElementById('imagePreview');
     const previewImg = document.getElementById('previewImg');
     const currentImage = document.getElementById('currentProfileImage');
     
     if (imageInput) {
-        imageInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
+        imageInput.addEventListener('input', function() {
+            const url = this.value.trim();
             
-            if (file) {
-                // Vérifier que c'est bien une image
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
+            if (url) {
+                // Vérifier si l'URL est valide en créant une nouvelle image
+                const testImg = new Image();
+                testImg.onload = function() {
+                    previewImg.src = url;
+                    previewContainer.style.display = 'block';
                     
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                        previewContainer.style.display = 'block';
-                        
-                        // Mettre à jour l'image de profil en temps réel
-                        if (currentImage) {
-                            currentImage.src = e.target.result;
-                        }
-                    };
-                    
-                    reader.readAsDataURL(file);
-                } else {
+                    // Mettre à jour l'image de profil en temps réel
+                    if (currentImage) {
+                        currentImage.src = url;
+                    }
+                };
+                testImg.onerror = function() {
                     previewContainer.style.display = 'none';
-                    alert('Please select a valid image file.');
-                }
+                };
+                testImg.src = url;
             } else {
                 previewContainer.style.display = 'none';
             }
@@ -315,5 +288,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}

@@ -1,0 +1,6 @@
+# Ignorer tous les fichiers dans ce dossier
+*
+# Mais garder ce fichier .gitignore pour créer le dossier
+!.gitignore
+*
+!.gitignore

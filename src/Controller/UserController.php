@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/user')]
@@ -24,11 +25,11 @@ class UserController extends AbstractController
         $users = [];
         
         if (in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
-            // SUPER_ADMIN voit tous les utilisateurs
-            $users = $userRepository->findAll();
+            // SUPER_ADMIN voit tous les utilisateurs sauf lui-même
+            $users = $userRepository->findAllExceptCurrentUser($currentUser->getId());
         } elseif (in_array('ROLE_ADMIN', $currentUser->getRoles())) {
-            // ADMIN voit seulement les clients (ROLE_USER)
-            $users = $userRepository->findUsersByRole('ROLE_USER');
+            // ADMIN voit seulement les clients (ROLE_USER) sauf lui-même
+            $users = $userRepository->findUsersByRoleExceptCurrent('ROLE_USER', $currentUser->getId());
         }
         
         return $this->render('user/index.html.twig', [
@@ -49,6 +50,27 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Gérer l'upload de l'image
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                $uploadsDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads/profiles';
+                
+                // Créer le dossier s'il n'existe pas
+                if (!file_exists($uploadsDirectory)) {
+                    mkdir($uploadsDirectory, 0777, true);
+                }
+                
+                // Générer un nom unique pour le fichier
+                $fileName = uniqid() . '.' . $imageFile->guessExtension();
+                
+                try {
+                    $imageFile->move($uploadsDirectory, $fileName);
+                    $user->setImage('/uploads/profiles/' . $fileName);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                }
+            }
+            
             $plainPassword = $form->get('plainPassword')->getData();
             
             // Only update password if a new one is provided

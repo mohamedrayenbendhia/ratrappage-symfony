@@ -64,17 +64,22 @@
                             <tr>
                                 <td>{{ user.email }}</td>
                                 <td>
-                                    {% for role in user.roles %}
-                                        {% if role == 'ROLE_SUPER_ADMIN' %}
-                                            <span class="badge bg-danger">Super Admin</span>
-                                        {% elseif role == 'ROLE_ADMIN' %}
-                                            <span class="badge bg-warning">Admin</span>
-                                        {% elseif role == 'ROLE_USER' %}
-                                            <span class="badge bg-info">Client</span>
-                                        {% else %}
-                                            <span class="badge bg-secondary">{{ role }}</span>
-                                        {% endif %}
-                                    {% endfor %}
+                                    {% set primaryRole = '' %}
+                                    {% if 'ROLE_SUPER_ADMIN' in user.roles %}
+                                        {% set primaryRole = 'ROLE_SUPER_ADMIN' %}
+                                    {% elseif 'ROLE_ADMIN' in user.roles %}
+                                        {% set primaryRole = 'ROLE_ADMIN' %}
+                                    {% else %}
+                                        {% set primaryRole = 'ROLE_USER' %}
+                                    {% endif %}
+                                    
+                                    {% if primaryRole == 'ROLE_SUPER_ADMIN' %}
+                                        <span class="badge bg-danger">Super Admin</span>
+                                    {% elseif primaryRole == 'ROLE_ADMIN' %}
+                                        <span class="badge bg-warning">Admin</span>
+                                    {% elseif primaryRole == 'ROLE_USER' %}
+                                        <span class="badge bg-info">Client</span>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     <span class="status {{ user.isVerified ? 'text-success' : 'text-danger' }}">&bull;</span>

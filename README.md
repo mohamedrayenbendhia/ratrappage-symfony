@@ -42,10 +42,18 @@ Système complet de gestion d'utilisateurs avec authentification, autorisation b
 
 ### 👥 Gestion des Utilisateurs (CRUD)
 - **Création** d'utilisateurs par les admins
-- **Lecture** avec filtrage par rôles
+- **Lecture** avec filtrage par rôles et exclusion de l'utilisateur connecté
 - **Modification** avec restrictions de permissions
 - **Suppression** avec confirmation
 - **Blocage/Déblocage** d'utilisateurs
+- **Photo de profil** via URL dans la page profile
+
+### 🖼️ Gestion des Profils
+- **Page profile centrée** avec design moderne
+- **Upload de photo de profil** par URL
+- **Prévisualisation** en temps réel de l'image
+- **Mise à jour** dynamique de la photo dans l'en-tête
+- **Formulaire responsive** avec validation côté client
 
 ### 🔒 Sécurité Avancée
 - **Réinitialisation de mot de passe** sécurisée
@@ -225,8 +233,34 @@ php -S localhost:8000 -t public/
 
 ### ROLE_USER (Client)
 - **Accès** à l'espace client personnel
-- **Modification** de son propre profil
+- **Modification** de son propre profil avec photo
 - **Aucun accès** aux fonctionnalités d'administration
+
+## 🔧 Fonctionnalités Techniques Avancées
+
+### Exclusion de l'Utilisateur Connecté
+Pour éviter la redondance, l'utilisateur connecté ne voit pas son propre compte dans la liste des utilisateurs :
+
+**Implémentation dans UserController :**
+```php
+// SUPER_ADMIN voit tous les utilisateurs sauf lui-même
+$users = $userRepository->findAllExceptCurrentUser($currentUser->getId());
+
+// ADMIN voit seulement les clients sauf lui-même  
+$users = $userRepository->findUsersByRoleExceptCurrent('ROLE_USER', $currentUser->getId());
+```
+
+**Nouvelles méthodes dans UserRepository :**
+```php
+public function findAllExceptCurrentUser(int $currentUserId): array
+public function findUsersByRoleExceptCurrent(string $role, int $currentUserId): array
+```
+
+### Gestion des Photos de Profil
+- **Stockage URL** dans la base de données (champ `image` de type string)
+- **Prévisualisation JavaScript** en temps réel
+- **Validation côté client** avec fallback en cas d'erreur
+- **Interface centrée** avec design moderne responsive
 
 ## 🛣️ Routes Principales
 

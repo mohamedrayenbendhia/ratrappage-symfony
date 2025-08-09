@@ -69,6 +69,34 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    /**
+     * Trouve tous les utilisateurs sauf l'utilisateur connecté
+     */
+    public function findAllExceptCurrentUser(int $currentUserId): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id != :currentUserId')
+            ->setParameter('currentUserId', $currentUserId)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Trouve les utilisateurs par rôle sauf l'utilisateur connecté
+     */
+    public function findUsersByRoleExceptCurrent(string $role, int $currentUserId): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.roles LIKE :role')
+            ->andWhere('u.id != :currentUserId')
+            ->setParameter('role', '%"' . $role . '"%')
+            ->setParameter('currentUserId', $currentUserId)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
