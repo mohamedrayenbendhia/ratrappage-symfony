@@ -176,6 +176,26 @@
             border-radius: 10px;
             border: 2px solid #e9ecef;
         }
+        
+        .form-errors {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .form-errors ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .form-errors li {
+            margin-bottom: 3px;
+        }
+        
+        .has-error .form-control {
+            border-color: #dc3545;
+        }
     </style>
 {% endblock %}
 
@@ -229,10 +249,11 @@
                 {% endfor %}
             {% endfor %}
             
-            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
                 <div class="form-group">
                     {{ form_label(form.imageFile, 'Profile Picture', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.imageFile) }}
                     {% if form.imageFile.vars.help %}
                         <div class="form-help">{{ form.imageFile.vars.help }}</div>
                     {% else %}
@@ -246,26 +267,31 @@
                 <div class="form-group">
                     {{ form_label(form.name, 'Name', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Your full name'}}) }}
+                    {{ form_errors(form.name) }}
                 </div>
                 
                 <div class="form-group">
                     {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'your@email.com'}}) }}
+                    {{ form_errors(form.email) }}
                 </div>
                 
                 <div class="form-group">
                     {{ form_label(form.phoneNumber, 'Phone', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': '12345678'}}) }}
+                    {{ form_errors(form.phoneNumber) }}
                 </div>
                 
                 <div class="form-group">
                     {{ form_label(form.plainPassword.first, 'New Password', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Leave blank to keep current password'}}) }}
+                    {{ form_errors(form.plainPassword.first) }}
                 </div>
                 
                 <div class="form-group">
                     {{ form_label(form.plainPassword.second, 'Confirm Password', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Repeat new password'}}) }}
+                    {{ form_errors(form.plainPassword.second) }}
                 </div>
                 
                 <button type="submit" class="btn-update">

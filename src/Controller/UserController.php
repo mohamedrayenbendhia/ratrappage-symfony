@@ -10,7 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -39,8 +41,12 @@ class UserController extends AbstractController
 
 
     #[Route('/profile', name: 'app_user_profile', methods: ['GET', 'POST'])]
-    public function profile(Request $request, EntityManagerInterface $entityManager): Response
-    {
+    public function profile(
+        Request $request, 
+        EntityManagerInterface $entityManager, 
+        UserPasswordHasherInterface $userPasswordHasher,
+        SluggerInterface $slugger
+    ): Response {
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException('You must be logged in to view your profile.');
@@ -53,21 +59,19 @@ class UserController extends AbstractController
             // Gérer l'upload de l'image
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
-                $uploadsDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads/profiles';
-                
-                // Créer le dossier s'il n'existe pas
-                if (!file_exists($uploadsDirectory)) {
-                    mkdir($uploadsDirectory, 0777, true);
-                }
-                
-                // Générer un nom unique pour le fichier
-                $fileName = uniqid() . '.' . $imageFile->guessExtension();
-                
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
                 try {
-                    $imageFile->move($uploadsDirectory, $fileName);
-                    $user->setImage('/uploads/profiles/' . $fileName);
+                    $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/uploads/profile';
+                    if (!is_dir($uploadsDirectory)) {
+                        mkdir($uploadsDirectory, 0755, true);
+                    }
+                    $imageFile->move($uploadsDirectory, $newFilename);
+                    $user->setImage('/uploads/profile/'.$newFilename);
                 } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                    $this->addFlash('error', 'Error uploading image: ' . $e->getMessage());
                 }
             }
             
@@ -75,8 +79,9 @@ class UserController extends AbstractController
             
             // Only update password if a new one is provided
             if (!empty($plainPassword)) {
-                $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
-                $user->setPassword($hashedPassword);
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword($user, $plainPassword)
+                );
                 $this->addFlash('success', 'Profile and password updated successfully.');
             } else {
                 $this->addFlash('success', 'Profile updated successfully.');
@@ -85,8 +90,6 @@ class UserController extends AbstractController
             $entityManager->flush();
             
             return $this->redirectToRoute('app_user_profile');
-        } else if ($form->isSubmitted() && !$form->isValid()) {
-            $this->addFlash('error', 'Please correct the errors in the form.');
         }
 
         return $this->render('user/profile.html.twig', [

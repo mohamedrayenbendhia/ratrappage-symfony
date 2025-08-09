@@ -1,0 +1,306 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ratings Received{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .ratings-container {
+            padding: 30px 20px;
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .page-header .subtitle {
+            color: #6c757d;
+            font-size: 16px;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+        
+        .stat-item {
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .average-rating {
+            color: #ffc107;
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+        
+        .ratings-list {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 20px;
+        }
+        
+        .rating-item {
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .rating-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .rating-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .rater-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .rater-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .rater-details h6 {
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .rater-details small {
+            color: #6c757d;
+        }
+        
+        .rating-stars {
+            color: #ffc107;
+            font-size: 20px;
+        }
+        
+        .rating-comment {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            color: #495057;
+            font-style: italic;
+            border-left: 4px solid #667eea;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 60px 20px;
+        }
+        
+        .empty-message i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-message h4 {
+            margin-bottom: 10px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            background: white;
+            color: #6c757d;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="ratings-container">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-comment-dots"></i> Ratings Received</h1>
+            <p class="subtitle">See what others think about you</p>
+        </div>
+        
+        <a href="{{ path('app_client_dashboard') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <!-- Statistics -->
+        <div class="stats-card">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number average-rating">{{ averageRating }}</div>
+                    <div class="stat-label">Average Rating</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">{{ totalRatings }}</div>
+                    <div class="stat-label">Total Ratings</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">
+                        {% set fiveStarCount = 0 %}
+                        {% for rating in ratingsReceived %}
+                            {% if rating.stars == 5 %}
+                                {% set fiveStarCount = fiveStarCount + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ fiveStarCount }}
+                    </div>
+                    <div class="stat-label">5-Star Ratings</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ratings List -->
+        <div class="ratings-list">
+            <h3 class="section-title">
+                <i class="fas fa-list"></i> All Ratings Received
+            </h3>
+            
+            {% if ratingsReceived|length > 0 %}
+                {% for rating in ratingsReceived %}
+                    <div class="rating-item">
+                        <div class="rating-header">
+                            <div class="rater-info">
+                                <div class="rater-avatar">
+                                    {{ rating.rater.name|first|upper }}
+                                </div>
+                                <div class="rater-details">
+                                    <h6>{{ rating.rater.name }}</h6>
+                                    <small>{{ rating.createdAt|date('F d, Y \\a\\t H:i') }}</small>
+                                </div>
+                            </div>
+                            <div class="rating-stars">
+                                {% for i in 1..5 %}
+                                    <i class="fas fa-star{{ i <= rating.stars ? '' : '-o' }}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        {% if rating.comment %}
+                            <div class="rating-comment">
+                                <i class="fas fa-quote-left"></i>
+                                {{ rating.comment }}
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">
+                    <i class="fas fa-inbox"></i>
+                    <h4>No ratings received yet</h4>
+                    <p>You haven't received any ratings from other users yet. Keep being awesome!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

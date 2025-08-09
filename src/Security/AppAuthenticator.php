@@ -90,17 +90,20 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // Redirection selon le rôle de l'utilisateur
+        // Redirection selon le rôle de l'utilisateur (ordre hiérarchique)
         $user = $token->getUser();
         $roles = $user->getRoles();
 
-        if (in_array('ROLE_SUPER_ADMIN', $roles) || in_array('ROLE_ADMIN', $roles)) {
+        // Vérifier d'abord les rôles les plus élevés
+        if (in_array('ROLE_SUPER_ADMIN', $roles)) {
             return new RedirectResponse($this->urlGenerator->generate('app_user_index'));
-        } elseif (in_array('ROLE_USER', $roles)) {
-            return new RedirectResponse($this->urlGenerator->generate('app_client_dashboard'));
+        } 
+        
+        if (in_array('ROLE_ADMIN', $roles)) {
+            return new RedirectResponse($this->urlGenerator->generate('app_user_index'));
         }
-
-        // Fallback par défaut
+        
+        // Si l'utilisateur n'a que ROLE_USER ou un tableau vide, il va vers le dashboard client
         return new RedirectResponse($this->urlGenerator->generate('app_client_dashboard'));
     }
 

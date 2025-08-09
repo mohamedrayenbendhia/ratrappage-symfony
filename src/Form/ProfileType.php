@@ -8,11 +8,12 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Length;
+
 
 class ProfileType extends AbstractType
 {
@@ -40,19 +41,16 @@ class ProfileType extends AbstractType
                 ],
                 'help' => 'Formats acceptés: JPEG, PNG, GIF. Taille max: 5MB'
             ])
-            ->add('name', null, [
+            ->add('name', TextType::class, [
                 'required' => true,
-                'empty_data' => '',
                 'attr' => ['class' => 'form-control']
             ])
             ->add('email', EmailType::class, [
                 'required' => true,
-                'empty_data' => '',
                 'attr' => ['class' => 'form-control']
             ])
-            ->add('phoneNumber', null, [
+            ->add('phoneNumber', TextType::class, [
                 'required' => true,
-                'empty_data' => '',
                 'attr' => ['class' => 'form-control']
             ])
             ->add('plainPassword', RepeatedType::class, [
