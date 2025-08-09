@@ -1,0 +1,16 @@
+controllers:
+    resource: ../src/Controller/
+    type: annotation
+
+kernel:
+    resource: ../src/Kernel.php
+    type: annotation
+
+2fa_login:
+    path: /2fa
+    controller: Scheb\TwoFactorBundle\Controller\FormController::form
+    methods: [GET, POST]
+
+2fa_login_check:
+    path: /2fa_check
+    controller: Scheb\TwoFactorBundle\Controller\FormController::check

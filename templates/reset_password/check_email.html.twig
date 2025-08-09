@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Password Reset Email Sent{% endblock %}
+
+{% block body %}
+<section class="background-radial-gradient overflow-hidden">
+    <style>
+        /* Background Radial Gradient */
+        .background-radial-gradient {
+            background-color: hsl(218, 41%, 15%);
+            background-image: radial-gradient(650px circle at 0% 0%, hsl(218, 41%, 35%) 15%, hsl(218, 41%, 30%) 35%, hsl(218, 41%, 20%) 75%, hsl(218, 41%, 19%) 80%, transparent 100%), radial-gradient(1250px circle at 100% 100%, hsl(218, 41%, 45%) 15%, hsl(218, 41%, 30%) 35%, hsl(218, 41%, 20%) 75%, hsl(218, 41%, 19%) 80%, transparent 100%);
+        }
+
+        /* Styling for the notification container */
+        .notification-container {
+            max-width: 700px;
+            margin: 100px auto;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            backdrop-filter: blur(30px);
+            color: hsl(218, 81%, 95%);
+            text-align: center;
+            box-shadow: 0 8px 50px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .notification-container h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .notification-container p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: hsl(218, 81%, 85%);
+        }
+
+        .notification-container a {
+            font-size: 1.2rem;
+            color: #ad1fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .notification-container a:hover {
+            color: #6b0f8a;
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #44006b, #ad1fff);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(173, 31, 255, 0.6);
+        }
+    </style>
+
+    <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+        <div class="notification-container">
+            <h2>Password Reset Email Sent</h2>
+            <p>
+                If an account matching your email exists, an email has just been sent containing a link to reset your password. 
+                This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+            </p>
+            <p>If you don't receive an email, please check your spam folder or <a href="{{ path('app_forgot_password_request') }}">try again</a>.</p>
+            <a href="{{ path('app_login') }}" class="btn btn-primary">Back to Login</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Client{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2><i class="fas fa-user-circle"></i> Bienvenue dans l'espace client</h2>
+                </div>
+                <div class="card-body text-center">
+                    <div class="alert alert-success">
+                        <h4><i class="fas fa-check-circle"></i> Bienvenue {{ user.name }} !</h4>
+                        <p class="mb-0">Vous êtes connecté avec succès à votre espace client.</p>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-user"></i> Mon Profil</h5>
+                                    <p>Gérez vos informations personnelles</p>
+                                    <a href="{{ path('app_user_profile') }}" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i> Modifier mon profil
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-info-circle"></i> Mes Informations</h5>
+                                    <p><strong>Email:</strong> {{ user.email }}</p>
+                                    <p><strong>Téléphone:</strong> {{ user.phoneNumber }}</p>
+                                    <p><strong>Membre depuis:</strong> {{ user.createdAt|date('d/m/Y') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{{ path('app_logout') }}" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

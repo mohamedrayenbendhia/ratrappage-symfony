@@ -1,0 +1,226 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\User;
+use App\Form\UserType;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+#[Route('/user')]
+class UserController extends AbstractController
+{
+    #[Route('/', name: 'app_user_index', methods: ['GET'])]
+    public function index(UserRepository $userRepository): Response
+    {
+        // Vérifier les permissions
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $currentUser = $this->getUser();
+        $users = [];
+        
+        if (in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
+            // SUPER_ADMIN voit tous les utilisateurs
+            $users = $userRepository->findAll();
+        } elseif (in_array('ROLE_ADMIN', $currentUser->getRoles())) {
+            // ADMIN voit seulement les clients (ROLE_USER)
+            $users = $userRepository->findUsersByRole('ROLE_USER');
+        }
+        
+        return $this->render('user/index.html.twig', [
+            'users' => $users,
+        ]);
+    }
+
+
+    #[Route('/profile', name: 'app_user_profile', methods: ['GET', 'POST'])]
+    public function profile(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to view your profile.');
+        }
+
+        $form = $this->createForm(\App\Form\ProfileType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            
+            // Only update password if a new one is provided
+            if (!empty($plainPassword)) {
+                $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
+                $user->setPassword($hashedPassword);
+                $this->addFlash('success', 'Profile and password updated successfully.');
+            } else {
+                $this->addFlash('success', 'Profile updated successfully.');
+            }
+            
+            $entityManager->flush();
+            
+            return $this->redirectToRoute('app_user_profile');
+        } else if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Please correct the errors in the form.');
+        }
+
+        return $this->render('user/profile.html.twig', [
+            'user' => $user,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword) {
+                // Hash the password before saving
+                $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
+                $user->setPassword($hashedPassword);
+                
+                // Gérer le rôle sélectionné
+                $selectedRole = $form->get('userRole')->getData();
+                $currentUser = $this->getUser();
+                
+                // Vérifier les permissions de création de rôle
+                if ($selectedRole === 'ROLE_ADMIN' && !in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
+                    $this->addFlash('error', 'Vous n\'avez pas les droits pour créer un administrateur.');
+                    return $this->renderForm('user/new.html.twig', [
+                        'user' => $user,
+                        'form' => $form,
+                    ]);
+                }
+                
+                if ($selectedRole === 'ROLE_SUPER_ADMIN' && !in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
+                    $this->addFlash('error', 'Vous n\'avez pas les droits pour créer un super administrateur.');
+                    return $this->renderForm('user/new.html.twig', [
+                        'user' => $user,
+                        'form' => $form,
+                    ]);
+                }
+                
+                $user->setRoles([$selectedRole]);
+                $user->setIsVerified(true); // Les utilisateurs créés par admin sont automatiquement vérifiés
+                
+                $entityManager->persist($user);
+                $entityManager->flush();
+                
+                $this->addFlash('success', 'User created successfully.');
+                return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            } else {
+                $this->addFlash('error', 'Password is required.');
+            }
+        } else if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Please correct the errors in the form.');
+        }
+
+        return $this->renderForm('user/new.html.twig', [
+            'user' => $user,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
+    public function show(User $user): Response
+    {
+        return $this->render('user/show.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $currentUser = $this->getUser();
+        
+        // Vérifier si l'admin peut modifier cet utilisateur
+        if (in_array('ROLE_ADMIN', $currentUser->getRoles()) && !in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
+            // Un ADMIN normal ne peut modifier que les clients (ROLE_USER)
+            if (!in_array('ROLE_USER', $user->getRoles())) {
+                throw $this->createAccessDeniedException('Vous ne pouvez modifier que les clients.');
+            }
+        }
+        
+        $form = $this->createForm(UserType::class, $user, ['is_edit' => true]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            
+            // Only update password if a new one is provided
+            if (!empty($plainPassword)) {
+                $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
+                $user->setPassword($hashedPassword);
+            }
+            
+            // Gérer le changement de rôle (seulement pour SUPER_ADMIN)
+            if ($form->has('userRole')) {
+                $selectedRole = $form->get('userRole')->getData();
+                if (in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
+                    $user->setRoles([$selectedRole]);
+                }
+            }
+            
+            $entityManager->flush();
+            $this->addFlash('success', 'User updated successfully.');
+
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        } else if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Please correct the errors in the form.');
+        }
+
+        return $this->renderForm('user/edit.html.twig', [
+            'user' => $user,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($user);
+            $entityManager->flush();
+            $this->addFlash('success', 'User deleted successfully.');
+        } else {
+            $this->addFlash('error', 'Invalid CSRF token.');
+        }
+
+        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/block', name: 'app_user_block', methods: ['POST'])]
+    public function block(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('block'.$user->getId(), $request->request->get('_token'))) {
+            $user->setIsBlocked(true);
+            $entityManager->flush();
+            $this->addFlash('danger', 'User has been blocked.');
+        }
+        return $this->redirectToRoute('app_user_index');
+    }
+
+    #[Route('/{id}/unblock', name: 'app_user_unblock', methods: ['POST'])]
+    public function unblock(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('unblock'.$user->getId(), $request->request->get('_token'))) {
+            $user->setIsBlocked(false);
+            $entityManager->flush();
+            $this->addFlash('success', 'User has been unblocked.');
+        }
+        return $this->redirectToRoute('app_user_index');
+    }
+}

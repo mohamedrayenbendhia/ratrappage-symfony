@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block body %}
+<section class="background-radial-gradient overflow-hidden">
+    <style>
+        /* Background Radial Gradient */
+        .background-radial-gradient {
+            background-color: hsl(218, 41%, 15%);
+            background-image: radial-gradient(650px circle at 0% 0%, hsl(218, 41%, 35%) 15%, hsl(218, 41%, 30%) 35%, hsl(218, 41%, 20%) 75%, hsl(218, 41%, 19%) 80%, transparent 100%), radial-gradient(1250px circle at 100% 100%, hsl(218, 41%, 45%) 15%, hsl(218, 41%, 30%) 35%, hsl(218, 41%, 20%) 75%, hsl(218, 41%, 19%) 80%, transparent 100%);
+        }
+
+        /* Animation on Hover of Buttons */
+        .btn-primary {
+            background: linear-gradient(45deg, #44006b, #ad1fff);
+            border: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(173, 31, 255, 0.6);
+        }
+
+        /* Glassmorphism Effect on Card */
+        .bg-glass {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(25px);
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .bg-glass:hover {
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        /* Circle Effects */
+        #radius-shape-1 {
+            height: 220px;
+            width: 220px;
+            top: -60px;
+            left: -130px;
+            background: radial-gradient(#44006b, #ad1fff);
+            overflow: hidden;
+            animation: rotateAnimation 4s infinite linear;
+        }
+
+        #radius-shape-2 {
+            border-radius: 38% 62% 63% 37% / 70% 33% 67% 30%;
+            bottom: -60px;
+            right: -110px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(#44006b, #ad1fff);
+            overflow: hidden;
+            animation: rotateAnimation 6s infinite linear;
+        }
+
+        @keyframes rotateAnimation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Text Effects */
+        .display-5 {
+            color: hsl(218, 81%, 95%);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .small-text {
+            font-size: 0.9rem;
+            color: hsl(218, 81%, 85%);
+        }
+
+        /* Enhanced Input Styling */
+        input[type="email"] {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: hsl(218, 81%, 95%);
+            font-size: 1rem;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        input[type="email"]:focus {
+            border-color: #ad1fff;
+            outline: none;
+            background: rgba(173, 31, 255, 0.1);
+            box-shadow: 0 0 8px rgba(173, 31, 255, 0.6);
+        }
+
+        input[type="email"]::placeholder {
+            color: hsl(218, 81%, 85%);
+        }
+    </style>
+
+    <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+        <div class="row gx-lg-5 align-items-center mb-5">
+            <div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 10">
+                <h1 class="my-5 display-5 fw-bold ls-tight">
+                    Reset Your Password <br />
+                    <span style="color: hsl(218, 81%, 75%)">It's just one step away!</span>
+                </h1>
+                <p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
+                    Enter your email below, and we'll send you a link to reset your password. It’s quick and easy!
+                </p>
+            </div>
+
+            <div class="col-lg-6 mb-5 mb-lg-0 position-relative">
+                <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
+                <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
+
+                <div class="card bg-glass">
+                    <div class="card-body px-4 py-5 px-md-5">
+                        {% for flash_error in app.flashes('reset_password_error') %}
+                            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                        {% endfor %}
+                        <h2 class="text-center mb-4">Reset Your Password</h2>
+                        {{ form_start(requestForm) }}
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    {{ form_row(requestForm.email) }}
+                                </div>
+                            </div>
+
+                            <div class="text-center small-text">
+                                Enter your email and we'll send you a link to reset your password.
+                            </div>
+
+                            <button class="btn btn-primary btn-block mb-4">
+                                Send Reset Link
+                            </button>
+                        {{ form_end(requestForm) }}
+
+                        <div class="text-center">
+                            <p>Remembered your password? <a href="{{ path('app_login') }}">Log in here</a>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
