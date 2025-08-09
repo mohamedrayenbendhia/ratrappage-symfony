@@ -37,7 +37,6 @@ class UserType extends AbstractType
                     'attr' => ['autocomplete' => 'new-password'],
                     'constraints' => !$options['is_edit'] ? [
                         new \Symfony\Component\Validator\Constraints\NotBlank(['message' => 'Password cannot be blank.']),
-                        new \Symfony\Component\Validator\Constraints\Length(['min' => 8, 'minMessage' => 'Password must be at least {{ limit }} characters.'])
                     ] : [],
                 ],
                 'second_options' => [

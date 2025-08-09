@@ -24,6 +24,10 @@ class RegistrationFormType extends AbstractType
                 'first_options'  => [
                     'label' => 'Password',
                     'attr' => ['autocomplete' => 'new-password'],
+                    'constraints' => [
+                        new \Symfony\Component\Validator\Constraints\NotBlank(['message' => 'Password cannot be blank.']),
+                        new \Symfony\Component\Validator\Constraints\Length(['min' => 8, 'minMessage' => 'Password must be at least {{ limit }} characters.'])
+                    ],
                 ],
                 'second_options' => [
                     'label' => 'Repeat Password',
