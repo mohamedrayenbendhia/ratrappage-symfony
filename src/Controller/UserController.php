@@ -49,47 +49,71 @@ class UserController extends AbstractController
     ): Response {
         $user = $this->getUser();
         if (!$user) {
-            throw $this->createAccessDeniedException('You must be logged in to view your profile.');
+            return $this->redirectToRoute('app_login');
         }
+
+        // Rafraîchir l'utilisateur depuis la base de données pour éviter les problèmes de session
+        $entityManager->refresh($user);
 
         $form = $this->createForm(\App\Form\ProfileType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Gérer l'upload de l'image
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+        if ($form->isSubmitted()) {
+            // Vérifier que l'utilisateur est toujours connecté
+            if (!$this->getUser()) {
+                $this->addFlash('error', 'Your session has expired. Please log in again.');
+                return $this->redirectToRoute('app_login');
+            }
 
+            if ($form->isValid()) {
                 try {
-                    $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/uploads/profile';
-                    if (!is_dir($uploadsDirectory)) {
-                        mkdir($uploadsDirectory, 0755, true);
+                    // Gérer l'upload de l'image
+                    $imageFile = $form->get('imageFile')->getData();
+                    if ($imageFile) {
+                        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                        $safeFilename = $slugger->slug($originalFilename);
+                        $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                        try {
+                            $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/uploads/profile';
+                            if (!is_dir($uploadsDirectory)) {
+                                mkdir($uploadsDirectory, 0755, true);
+                            }
+                            $imageFile->move($uploadsDirectory, $newFilename);
+                            $user->setImage('/uploads/profile/'.$newFilename);
+                        } catch (FileException $e) {
+                            $this->addFlash('error', 'Error uploading image: ' . $e->getMessage());
+                            return $this->render('user/profile.html.twig', [
+                                'user' => $user,
+                                'form' => $form,
+                            ]);
+                        }
                     }
-                    $imageFile->move($uploadsDirectory, $newFilename);
-                    $user->setImage('/uploads/profile/'.$newFilename);
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Error uploading image: ' . $e->getMessage());
+                    
+                    $plainPassword = $form->get('plainPassword')->getData();
+                    
+                    // Only update password if a new one is provided
+                    if (!empty($plainPassword)) {
+                        $user->setPassword(
+                            $userPasswordHasher->hashPassword($user, $plainPassword)
+                        );
+                        $this->addFlash('success', 'Profile and password updated successfully.');
+                    } else {
+                        $this->addFlash('success', 'Profile updated successfully.');
+                    }
+                    
+                    $entityManager->flush();
+                    
+                    return $this->redirectToRoute('app_user_profile');
+                    
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'An error occurred while updating your profile. Please try again.');
+                    error_log('Profile update error: ' . $e->getMessage());
                 }
-            }
-            
-            $plainPassword = $form->get('plainPassword')->getData();
-            
-            // Only update password if a new one is provided
-            if (!empty($plainPassword)) {
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword($user, $plainPassword)
-                );
-                $this->addFlash('success', 'Profile and password updated successfully.');
             } else {
-                $this->addFlash('success', 'Profile updated successfully.');
+                // Formulaire soumis mais invalide
+                $this->addFlash('error', 'Please correct the errors in the form.');
             }
-            
-            $entityManager->flush();
-            
-            return $this->redirectToRoute('app_user_profile');
         }
 
         return $this->render('user/profile.html.twig', [

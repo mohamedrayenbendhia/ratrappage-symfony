@@ -5,22 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3e2ebdb-a9aa-48ed-b7d7-f67e83b735de" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Entity/Rating.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Form/RatingType.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Repository/RatingRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/client/rating.html.twig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/client/ratings_received.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/packages/framework.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/framework.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/ClientController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/ClientController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/SecurityController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/SecurityController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/create_env_local.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/TestSmsController.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Form/ProfileType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Form/ProfileType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/UserRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/UserRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Security/AppAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Security/AppAuthenticator.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/client/dashboard.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/client/dashboard.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/user/profile.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user/profile.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/test/sms_test.html.twig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_sms_standalone.php" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,6 +157,7 @@
       <workItem from="1754737957865" duration="1535000" />
       <workItem from="1754760839720" duration="1277000" />
       <workItem from="1754790716602" duration="49000" />
+      <workItem from="1754791345607" duration="736000" />
     </task>
     <servers />
   </component>

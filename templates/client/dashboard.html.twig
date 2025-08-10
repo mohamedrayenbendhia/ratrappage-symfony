@@ -23,6 +23,7 @@
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
+            position: relative;
         }
         
         .welcome-header h1 {
@@ -34,6 +35,33 @@
         .welcome-header .subtitle {
             color: #6c757d;
             font-size: 18px;
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8787);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #ff5252, #ff6b6b);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .logout-btn i {
+            margin-right: 8px;
         }
         
         .stats-grid {
@@ -232,6 +260,9 @@
 
         <!-- Welcome Header -->
         <div class="welcome-header">
+            <a href="{{ path('app_logout') }}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
             <h1>Welcome back, {{ user.name }}!</h1>
             <p class="subtitle">Here's your activity overview</p>
         </div>
