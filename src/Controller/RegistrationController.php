@@ -57,17 +57,23 @@ class RegistrationController extends AbstractController
                 if ($smsSent) {
                     $this->addFlash('success', 'Registration successful! A confirmation SMS has been sent.');
                 } else {
-                    $this->addFlash('warning', 'Registration successful! however, sending the SMS failed.');
+                    $this->addFlash('warning', 'Registration successful! However, sending the SMS failed.');
                 }
             } catch (\Exception $e) {
-                $this->addFlash('warning', 'Registration successful! however, sending the SMS failed.');
+                // Log l'erreur pour debug
+                error_log('SMS Error: ' . $e->getMessage());
+                $this->addFlash('warning', 'Registration successful! However, sending the SMS failed.');
             }
 
-            return $userAuthenticator->authenticateUser(
+            // Authentifier l'utilisateur et rediriger vers le dashboard client
+            $userAuthenticator->authenticateUser(
                 $user,
                 $authenticator,
                 $request
             );
+            
+            // Redirection manuelle vers le dashboard client
+            return $this->redirectToRoute('app_client_dashboard');
         }
 
         return $this->render('registration/register.html.twig', [

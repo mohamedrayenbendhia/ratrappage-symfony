@@ -219,6 +219,17 @@
 {% block body %}
 <div class="dashboard-container">
     <div class="container">
+        <!-- Messages Flash -->
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'success' ? 'success' : label == 'warning' ? 'warning' : 'info' }} alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-{{ label == 'success' ? 'check-circle' : label == 'warning' ? 'exclamation-triangle' : 'info-circle' }} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         <!-- Welcome Header -->
         <div class="welcome-header">
             <h1>Welcome back, {{ user.name }}!</h1>

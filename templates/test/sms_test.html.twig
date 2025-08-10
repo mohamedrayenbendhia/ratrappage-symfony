@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test SMS{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3><i class="fas fa-sms"></i> Test SMS Service</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Messages Flash -->
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+
+                    <!-- Configuration Twilio -->
+                    <h4>Configuration Twilio</h4>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><strong>Account SID</strong></td>
+                                <td><code>{{ config.twilio_sid }}</code></td>
+                                <td>
+                                    {% if config.twilio_sid == 'default_value' %}
+                                        <span class="badge bg-warning">Non configuré</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Configuré</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Auth Token</strong></td>
+                                <td><code>{{ config.twilio_token }}</code></td>
+                                <td>
+                                    {% if config.twilio_token == 'default_value' %}
+                                        <span class="badge bg-warning">Non configuré</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Configuré</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>From Number</strong></td>
+                                <td><code>{{ config.twilio_from }}</code></td>
+                                <td>
+                                    {% if config.twilio_from == '+1234567890' %}
+                                        <span class="badge bg-warning">Valeur par défaut</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Configuré</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>To Number</strong></td>
+                                <td><code>{{ config.twilio_to }}</code></td>
+                                <td>
+                                    {% if config.twilio_to == '+21655667940' %}
+                                        <span class="badge bg-info">Valeur par défaut</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Configuré</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Résultats des tests -->
+                    <h4>Résultats des Tests</h4>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Test</th>
+                                    <th>Statut</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for test in results %}
+                                    <tr>
+                                        <td>{{ test.name }}</td>
+                                        <td>
+                                            {% if test.success %}
+                                                <span class="badge bg-success">Succès</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Échec</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if test.success %}
+                                                {{ test.message }}
+                                            {% else %}
+                                                <code>{{ test.error }}</code>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-3">
+                        <a href="{{ path('test_sms_send') }}" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Envoyer un SMS de test
+                        </a>
+                        <a href="{{ path('test_sms') }}" class="btn btn-secondary">
+                            <i class="fas fa-refresh"></i> Actualiser
+                        </a>
+                        <a href="{{ path('app_client_dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour au dashboard
+                        </a>
+                    </div>
+
+                    <!-- Logs en temps réel -->
+                    <div class="mt-4">
+                        <h5>Instructions pour voir les logs en temps réel :</h5>
+                        <div class="alert alert-info">
+                            <p><strong>Windows PowerShell :</strong></p>
+                            <code>Get-Content "var/log/dev.log" -Wait -Tail 20</code>
+                            
+                            <p class="mt-2"><strong>Ou dans le terminal du serveur PHP :</strong></p>
+                            <p>Les logs s'affichent directement dans le terminal où vous avez lancé <code>php -S 127.0.0.1:8000 -t public</code></p>
+                        </div>
+                    </div>
+
+                    <!-- Configuration pour production -->
+                    <div class="mt-4">
+                        <h5>Configuration pour utiliser un vrai SMS :</h5>
+                        <div class="alert alert-warning">
+                            <p>Créez un fichier <code>.env.local</code> à la racine du projet avec :</p>
+                            <pre><code>TWILIO_SID=votre_account_sid_twilio
+TWILIO_AUTH_TOKEN=votre_auth_token_twilio
+TWILIO_FROM_NUMBER=votre_numero_twilio_avec_indicatif
+TWILIO_TO_NUMBER=numero_destinataire_avec_indicatif</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
