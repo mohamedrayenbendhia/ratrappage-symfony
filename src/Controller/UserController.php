@@ -52,17 +52,50 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // Rafraîchir l'utilisateur depuis la base de données pour éviter les problèmes de session
-        $entityManager->refresh($user);
-
         $form = $this->createForm(\App\Form\ProfileType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             // Vérifier que l'utilisateur est toujours connecté
-            if (!$this->getUser()) {
+            $currentUser = $this->getUser();
+            if (!$currentUser) {
                 $this->addFlash('error', 'Your session has expired. Please log in again.');
                 return $this->redirectToRoute('app_login');
+            }
+
+            // Validation simple sans exceptions
+            $formData = $form->getData();
+            $errors = [];
+            
+            if (empty(trim($formData->getName()))) {
+                $errors[] = 'Name is required.';
+            }
+            
+            if (empty(trim($formData->getEmail()))) {
+                $errors[] = 'Email is required.';
+            }
+            
+            if (empty(trim($formData->getPhoneNumber()))) {
+                $errors[] = 'Phone number is required.';
+            }
+
+            // Validation du mot de passe si fourni
+            $plainPassword = $form->get('plainPassword')->getData();
+            if (!empty($plainPassword) && strlen($plainPassword) < 8) {
+                $errors[] = 'Password must be at least 8 characters.';
+            }
+
+            // Si il y a des erreurs, les afficher sans impact sur la session
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    $this->addFlash('warning', $error);
+                }
+                // Forcer la re-création du formulaire avec l'utilisateur original
+                $form = $this->createForm(\App\Form\ProfileType::class, $user);
+                return $this->render('user/profile.html.twig', [
+                    'user' => $user,
+                    'form' => $form,
+                ]);
             }
 
             if ($form->isValid()) {
@@ -107,12 +140,18 @@ class UserController extends AbstractController
                     return $this->redirectToRoute('app_user_profile');
                     
                 } catch (\Exception $e) {
-                    $this->addFlash('error', 'An error occurred while updating your profile. Please try again.');
+                    $this->addFlash('warning', 'An error occurred while updating your profile. Please try again.');
                     error_log('Profile update error: ' . $e->getMessage());
+                    
+                    // Re-créer le formulaire avec l'utilisateur original en cas d'erreur
+                    $form = $this->createForm(\App\Form\ProfileType::class, $user);
                 }
             } else {
-                // Formulaire soumis mais invalide
-                $this->addFlash('error', 'Please correct the errors in the form.');
+                // Formulaire soumis mais invalide selon Symfony - traiter comme un avertissement
+                $this->addFlash('warning', 'Please check your entries and try again.');
+                
+                // Re-créer le formulaire avec l'utilisateur original
+                $form = $this->createForm(\App\Form\ProfileType::class, $user);
             }
         }
 

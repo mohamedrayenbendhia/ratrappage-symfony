@@ -42,15 +42,23 @@ class ProfileType extends AbstractType
                 'help' => 'Formats acceptés: JPEG, PNG, GIF. Taille max: 5MB'
             ])
             ->add('name', TextType::class, [
-                'required' => true,
-                'attr' => ['class' => 'form-control']
+                'required' => false,
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Length([
+                        'min' => 2,
+                        'max' => 100,
+                        'minMessage' => 'Name must be at least {{ limit }} characters.',
+                        'maxMessage' => 'Name cannot be longer than {{ limit }} characters.',
+                    ]),
+                ],
             ])
             ->add('email', EmailType::class, [
-                'required' => true,
+                'required' => false,
                 'attr' => ['class' => 'form-control']
             ])
             ->add('phoneNumber', TextType::class, [
-                'required' => true,
+                'required' => false,
                 'attr' => ['class' => 'form-control']
             ])
             ->add('plainPassword', RepeatedType::class, [

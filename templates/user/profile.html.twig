@@ -249,7 +249,7 @@
                 {% endfor %}
             {% endfor %}
             
-            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
                 <div class="form-group">
                     {{ form_label(form.imageFile, 'Profile Picture', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
