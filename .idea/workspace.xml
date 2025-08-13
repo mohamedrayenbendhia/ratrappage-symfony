@@ -5,12 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3e2ebdb-a9aa-48ed-b7d7-f67e83b735de" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/config/packages/framework.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/framework.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/create_env_local.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/TestSmsController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UserController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/client/dashboard.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/client/dashboard.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/test/sms_test.html.twig" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/test_sms_standalone.php" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,6 +20,11 @@
     <execution />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="1ce5a21bf4b560f3672831fd030f4c6eaa908b9e" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">

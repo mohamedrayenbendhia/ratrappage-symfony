@@ -269,11 +269,7 @@
         
         <!-- Statistics -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-star stat-icon star-rating"></i>
-                <div class="stat-number">{{ averageRating }}</div>
-                <div class="stat-label">Average Rating</div>
-            </div>
+            
             
             <div class="stat-card">
                 <i class="fas fa-comment-dots stat-icon received-icon"></i>
@@ -317,78 +313,7 @@
             </div>
         </div>
         
-        <!-- Recent Activity -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="recent-section">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="section-title">Recent Ratings Received</h3>
-                        {% if totalRatingsReceived > 5 %}
-                            <a href="{{ path('app_client_ratings_received') }}" class="view-all-btn">View All</a>
-                        {% endif %}
-                    </div>
-                    
-                    {% if ratingsReceived|length > 0 %}
-                        {% for rating in ratingsReceived %}
-                            <div class="rating-item">
-                                <div class="rating-info">
-                                    <h6>{{ rating.rater.name }}</h6>
-                                    <small>{{ rating.createdAt|date('M d, Y') }}</small>
-                                    {% if rating.comment %}
-                                        <p class="mb-0 mt-1"><small>"{{ rating.comment }}"</small></p>
-                                    {% endif %}
-                                </div>
-                                <div class="rating-stars">
-                                    {% for i in 1..5 %}
-                                        <i class="fas fa-star{{ i <= rating.stars ? '' : '-o' }}"></i>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-message">
-                            <i class="fas fa-inbox fa-2x mb-2"></i>
-                            <p>No ratings received yet</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="recent-section">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="section-title">Recent Ratings Given</h3>
-                        {% if totalRatingsGiven > 5 %}
-                            <a href="{{ path('app_client_rating') }}" class="view-all-btn">View All</a>
-                        {% endif %}
-                    </div>
-                    
-                    {% if ratingsGiven|length > 0 %}
-                        {% for rating in ratingsGiven %}
-                            <div class="rating-item">
-                                <div class="rating-info">
-                                    <h6>{{ rating.rated.name }}</h6>
-                                    <small>{{ rating.createdAt|date('M d, Y') }}</small>
-                                    {% if rating.comment %}
-                                        <p class="mb-0 mt-1"><small>"{{ rating.comment }}"</small></p>
-                                    {% endif %}
-                                </div>
-                                <div class="rating-stars">
-                                    {% for i in 1..5 %}
-                                        <i class="fas fa-star{{ i <= rating.stars ? '' : '-o' }}"></i>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-message">
-                            <i class="fas fa-plus-circle fa-2x mb-2"></i>
-                            <p>No ratings given yet</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+        
     </div>
 </div>
 
