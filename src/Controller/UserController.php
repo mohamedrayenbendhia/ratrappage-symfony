@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,24 +19,37 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class UserController extends AbstractController
 {
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(Request $request, UserRepository $userRepository, PaginatorInterface $paginator): Response
     {
         // Vérifier les permissions
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         
         $currentUser = $this->getUser();
-        $users = [];
         
+        // Récupérer les paramètres de recherche
+        $search = $request->query->get('search', '');
+        $roleFilter = $request->query->get('role', '');
+        
+        // Créer la requête selon les permissions
         if (in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
             // SUPER_ADMIN voit tous les utilisateurs sauf lui-même
-            $users = $userRepository->findAllExceptCurrentUser($currentUser->getId());
+            $queryBuilder = $userRepository->createSearchQueryBuilder($currentUser->getId(), $search, $roleFilter);
         } elseif (in_array('ROLE_ADMIN', $currentUser->getRoles())) {
             // ADMIN voit seulement les clients (ROLE_USER) sauf lui-même
-            $users = $userRepository->findUsersByRoleExceptCurrent('ROLE_USER', $currentUser->getId());
+            $queryBuilder = $userRepository->createSearchQueryBuilder($currentUser->getId(), $search, $roleFilter, 'ROLE_USER');
         }
         
+        // Pagination
+        $pagination = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            7 // 7 utilisateurs par page
+        );
+        
         return $this->render('user/index.html.twig', [
-            'users' => $users,
+            'pagination' => $pagination,
+            'search' => $search,
+            'roleFilter' => $roleFilter,
         ]);
     }
 

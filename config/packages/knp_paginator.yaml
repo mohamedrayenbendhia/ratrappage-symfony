@@ -1,0 +1,12 @@
+knp_paginator:
+    page_range: 5                       # Number of page links to show in pagination
+    default_options:
+        page_name: page                 # Query parameter name for page number
+        sort_field_name: sort           # Query parameter name for sort field
+        sort_direction_name: direction  # Query parameter name for sort direction
+        distinct: true                  # Ensure DISTINCT queries when necessary
+        filter_field_name: filterField  # Query parameter name for filter field
+        filter_value_name: filterValue  # Query parameter name for filter value
+    template:
+        pagination: '@KnpPaginator/Pagination/sliding.html.twig'
+        sortable: '@KnpPaginator/Pagination/sortable_link.html.twig'

@@ -98,6 +98,36 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * Crée un QueryBuilder pour la recherche avec pagination
+     */
+    public function createSearchQueryBuilder(int $currentUserId, string $search = '', string $roleFilter = '', string $restrictToRole = null)
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u.id != :currentUserId')
+            ->setParameter('currentUserId', $currentUserId);
+
+        // Restriction de rôle pour les ADMIN
+        if ($restrictToRole) {
+            $qb->andWhere('u.roles LIKE :restrictRole')
+               ->setParameter('restrictRole', '%"' . $restrictToRole . '"%');
+        }
+
+        // Recherche par email ou nom
+        if (!empty($search)) {
+            $qb->andWhere('u.email LIKE :search OR u.name LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+
+        // Filtre par rôle
+        if (!empty($roleFilter)) {
+            $qb->andWhere('u.roles LIKE :roleFilter')
+               ->setParameter('roleFilter', '%"' . $roleFilter . '"%');
+        }
+
+        return $qb->orderBy('u.createdAt', 'DESC');
+    }
+
+    /**
      * Trouve tous les utilisateurs sauf l'utilisateur donné (objet User)
      */
     public function findUsersExceptCurrent(User $currentUser): array
