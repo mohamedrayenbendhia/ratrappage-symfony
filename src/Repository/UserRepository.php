@@ -128,13 +128,38 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Trouve tous les utilisateurs sauf l'utilisateur donné (objet User)
+     * Trouve tous les clients sauf l'utilisateur donné (objet User)
+     * Exclut les admins et super admins
      */
     public function findUsersExceptCurrent(User $currentUser): array
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.id != :currentUserId')
+            ->andWhere('u.roles NOT LIKE :adminRole')
+            ->andWhere('u.roles NOT LIKE :superAdminRole')
             ->setParameter('currentUserId', $currentUser->getId())
+            ->setParameter('adminRole', '%"ROLE_ADMIN"%')
+            ->setParameter('superAdminRole', '%"ROLE_SUPER_ADMIN"%')
+            ->orderBy('u.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Trouve seulement les clients (utilisateurs avec ROLE_USER uniquement)
+     */
+    public function findClientsExceptCurrent(User $currentUser): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id != :currentUserId')
+            ->andWhere('(u.roles = :emptyRole OR u.roles LIKE :userRole)')
+            ->andWhere('u.roles NOT LIKE :adminRole')
+            ->andWhere('u.roles NOT LIKE :superAdminRole')
+            ->setParameter('currentUserId', $currentUser->getId())
+            ->setParameter('emptyRole', '[]')
+            ->setParameter('userRole', '%"ROLE_USER"%')
+            ->setParameter('adminRole', '%"ROLE_ADMIN"%')
+            ->setParameter('superAdminRole', '%"ROLE_SUPER_ADMIN"%')
             ->orderBy('u.name', 'ASC')
             ->getQuery()
             ->getResult();

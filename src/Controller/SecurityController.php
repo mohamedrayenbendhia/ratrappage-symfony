@@ -29,8 +29,8 @@ class SecurityController extends AbstractController
             if (in_array('ROLE_SUPER_ADMIN', $roles) || in_array('ROLE_ADMIN', $roles)) {
                 return $this->redirectToRoute('app_user_index');
             } else {
-                // ROLE_USER (client)
-                return $this->redirectToRoute('app_client_dashboard');
+                // ROLE_USER (client) - redirection vers la page home
+                return $this->redirectToRoute('app_client_home');
             }
         }
 

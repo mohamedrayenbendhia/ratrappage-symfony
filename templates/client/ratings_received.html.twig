@@ -1,10 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'client/base_client.html.twig' %}
 
 {% block title %}Ratings Received{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
+{% block client_content %}
+<style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -213,9 +212,7 @@
             text-decoration: none;
         }
     </style>
-{% endblock %}
 
-{% block body %}
 <div class="ratings-container">
     <div class="container">
         <!-- Page Header -->
@@ -298,7 +295,6 @@
                     <p>You haven't received any ratings from other users yet. Keep being awesome!</p>
                 </div>
             {% endif %}
-        </div>
     </div>
 </div>
 

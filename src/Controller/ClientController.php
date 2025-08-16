@@ -21,6 +21,123 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/client')]
 class ClientController extends AbstractController
 {
+    #[Route('/home', name: 'app_client_home', methods: ['GET'])]
+    public function home(): Response
+    {
+        // Vérifier que l'utilisateur est connecté
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Données statiques pour les maisons à louer
+        $rentProperties = [
+            [
+                'id' => 1,
+                'title' => 'Modern Apartment in City Center',
+                'price' => 1200,
+                'type' => 'Apartment',
+                'bedrooms' => 2,
+                'bathrooms' => 1,
+                'area' => 85,
+                'location' => 'Downtown, Tunis',
+                'image' => 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
+                'description' => 'Beautiful modern apartment with stunning city views, fully furnished with modern amenities.'
+            ],
+            [
+                'id' => 2,
+                'title' => 'Cozy Villa with Garden',
+                'price' => 2500,
+                'type' => 'Villa',
+                'bedrooms' => 4,
+                'bathrooms' => 3,
+                'area' => 250,
+                'location' => 'Sidi Bou Said',
+                'image' => 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400',
+                'description' => 'Spacious villa with private garden, perfect for families. Quiet neighborhood with easy access to amenities.'
+            ],
+            [
+                'id' => 3,
+                'title' => 'Studio Near University',
+                'price' => 600,
+                'type' => 'Studio',
+                'bedrooms' => 1,
+                'bathrooms' => 1,
+                'area' => 35,
+                'location' => 'Manouba',
+                'image' => 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400',
+                'description' => 'Perfect for students, close to university campus with all necessary amenities included.'
+            ],
+            [
+                'id' => 4,
+                'title' => 'Luxury Penthouse',
+                'price' => 3500,
+                'type' => 'Penthouse',
+                'bedrooms' => 3,
+                'bathrooms' => 2,
+                'area' => 180,
+                'location' => 'La Marsa',
+                'image' => 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400',
+                'description' => 'Luxurious penthouse with panoramic sea views, rooftop terrace, and premium finishes.'
+            ]
+        ];
+
+        // Données statiques pour les maisons à vendre
+        $saleProperties = [
+            [
+                'id' => 5,
+                'title' => 'Family House with Pool',
+                'price' => 280000,
+                'type' => 'House',
+                'bedrooms' => 5,
+                'bathrooms' => 3,
+                'area' => 320,
+                'location' => 'Carthage',
+                'image' => 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400',
+                'description' => 'Magnificent family house with swimming pool, large garden, and modern interior design.'
+            ],
+            [
+                'id' => 6,
+                'title' => 'Investment Apartment',
+                'price' => 150000,
+                'type' => 'Apartment',
+                'bedrooms' => 3,
+                'bathrooms' => 2,
+                'area' => 120,
+                'location' => 'Ariana',
+                'image' => 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400',
+                'description' => 'Great investment opportunity in a growing area with excellent public transport connections.'
+            ],
+            [
+                'id' => 7,
+                'title' => 'Beachfront Villa',
+                'price' => 450000,
+                'type' => 'Villa',
+                'bedrooms' => 6,
+                'bathrooms' => 4,
+                'area' => 400,
+                'location' => 'Gammarth',
+                'image' => 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400',
+                'description' => 'Exclusive beachfront villa with direct beach access, private dock, and luxury amenities.'
+            ],
+            [
+                'id' => 8,
+                'title' => 'Modern Townhouse',
+                'price' => 220000,
+                'type' => 'Townhouse',
+                'bedrooms' => 4,
+                'bathrooms' => 2,
+                'area' => 200,
+                'location' => 'Ben Arous',
+                'image' => 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=400',
+                'description' => 'Contemporary townhouse in secure residential complex with community facilities.'
+            ]
+        ];
+
+        return $this->render('client/home.html.twig', [
+            'rentProperties' => $rentProperties,
+            'saleProperties' => $saleProperties,
+            'user' => $this->getUser()
+        ]);
+    }
+
     #[Route('/dashboard', name: 'app_client_dashboard')]
     #[IsGranted('ROLE_USER')]
     public function dashboard(RatingRepository $ratingRepository): Response
@@ -63,8 +180,8 @@ class ClientController extends AbstractController
     ): Response {
         $user = $this->getUser();
         
-        // Récupérer tous les utilisateurs sauf l'utilisateur actuel
-        $availableUsers = $userRepository->findUsersExceptCurrent($user);
+        // Récupérer seulement les clients (pas les admins) sauf l'utilisateur actuel
+        $availableUsers = $userRepository->findClientsExceptCurrent($user);
         
         $rating = new Rating();
         $rating->setRater($user);

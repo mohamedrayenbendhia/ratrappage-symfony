@@ -103,8 +103,8 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($this->urlGenerator->generate('app_user_index'));
         }
         
-        // Si l'utilisateur n'a que ROLE_USER ou un tableau vide, il va vers le dashboard client
-        return new RedirectResponse($this->urlGenerator->generate('app_client_dashboard'));
+        // Si l'utilisateur n'a que ROLE_USER, il va vers la page home client
+        return new RedirectResponse($this->urlGenerator->generate('app_client_home'));
     }
 
     protected function getLoginUrl(Request $request): string

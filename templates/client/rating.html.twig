@@ -1,10 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'client/base_client.html.twig' %}
 
 {% block title %}Rate Users{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
+{% block client_content %}
+<style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -232,9 +231,7 @@
             color: white;
         }
     </style>
-{% endblock %}
 
-{% block body %}
 <div class="rating-container">
     <div class="container">
         <!-- Page Header -->
@@ -243,9 +240,7 @@
             <p class="subtitle">Share your experience and help build a better community</p>
         </div>
         
-        <a href="{{ path('app_client_dashboard') }}" class="btn-back">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
+        
         
         {% for label, messages in app.flashes %}
             {% for message in messages %}
@@ -333,7 +328,6 @@
                     {% endif %}
                 </div>
             </div>
-        </div>
     </div>
 </div>
 

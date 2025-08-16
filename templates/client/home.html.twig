@@ -1,0 +1,209 @@
+{% extends 'client/base_client.html.twig' %}
+
+{% block title %}Home - Dari W Darik{% endblock %}
+
+{% block client_content %}
+            <!-- Welcome Header -->
+            <div class="welcome-header mt-4 mb-4">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px;">
+                        <h1 class="display-4 mb-3">
+                            <i class="fas fa-globe"></i> Welcome, {{ app.user.name }}!
+                        </h1>
+                        <p class="lead">Discover a platform dedicated to cultural and collaborative travel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Description -->
+            <section class="project-description mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                            <div class="card-body p-5">
+                                <h2 class="text-center mb-4" style="color: #0d1a3a; font-weight: 700;">
+                                    <i class="fas fa-plane me-3"></i>Our Mission
+                                </h2>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="feature-box h-100">
+                                            <div class="feature-icon mb-3">
+                                                <i class="fas fa-handshake text-primary" style="font-size: 3rem;"></i>
+                                            </div>
+                                            <h4 class="text-primary mb-3">Cultural Exchange</h4>
+                                            <p class="text-muted">
+                                                My project consists of creating a platform dedicated to cultural and collaborative travel. 
+                                                For example, when I plan a trip to Egypt, I can consult this platform to 
+                                                get in touch with a local person ready to welcome me into their home.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-4">
+                                        <div class="feature-box h-100">
+                                            <div class="feature-icon mb-3">
+                                                <i class="fas fa-heart text-danger" style="font-size: 3rem;"></i>
+                                            </div>
+                                            <h4 class="text-danger mb-3">Mutual Hospitality</h4>
+                                            <p class="text-muted">
+                                                In exchange, I can offer them financial compensation or propose that they come, 
+                                                later, to stay at my place in my country. This system promotes cultural exchange, 
+                                                mutual hospitality and makes travel more accessible and authentic.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <a href="#" class="btn btn-primary btn-lg px-5 py-3" style="border-radius: 25px;">
+                                        <i class="fas fa-rocket me-2"></i>Start the Adventure
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Platform Benefits -->
+            <section class="benefits-section mb-5">
+                <div class="text-center mb-5">
+                    <h2 class="section-title">
+                        <i class="fas fa-star text-warning"></i> Why Choose Dari W Darik?
+                    </h2>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <div class="card benefit-card h-100 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="benefit-icon mb-3">
+                                    <i class="fas fa-globe-americas text-info" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5 class="card-title">Authentic Travel</h5>
+                                <p class="card-text">Discover destinations through the eyes of locals and live unique experiences.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 mb-4">
+                        <div class="card benefit-card h-100 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="benefit-icon mb-3">
+                                    <i class="fas fa-users text-success" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5 class="card-title">Caring Community</h5>
+                                <p class="card-text">Join a community of passionate travelers and welcoming hosts from around the world.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 mb-4">
+                        <div class="card benefit-card h-100 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="benefit-icon mb-3">
+                                    <i class="fas fa-wallet text-warning" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5 class="card-title">Economical</h5>
+                                <p class="card-text">Reduce your travel costs while creating authentic connections with locals.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+<style>
+/* Feature Box Styles */
+.feature-box {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 15px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.feature-icon {
+    margin-bottom: 1.5rem;
+}
+
+/* Benefit Card Styles */
+.benefit-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.benefit-icon {
+    background: #f8f9fa;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Section Styles */
+.section-title {
+    color: #0d1a3a;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.project-description .card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* Welcome Header */
+.welcome-header .card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* Button Styles */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.benefit-card, .feature-box {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.benefit-card:nth-child(1) { animation-delay: 0.1s; }
+.benefit-card:nth-child(2) { animation-delay: 0.2s; }
+.benefit-card:nth-child(3) { animation-delay: 0.3s; }
+</style>
+{% endblock %}

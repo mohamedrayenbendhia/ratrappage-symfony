@@ -1,10 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'client/base_client.html.twig' %}
 
 {% block title %}Client Dashboard{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
+{% block client_content %}
+<style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -48,6 +47,28 @@
             padding: 10px 20px;
             text-decoration: none;
             font-weight: 500;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .nav-btn:hover {
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         }
@@ -242,9 +263,7 @@
             text-decoration: none;
         }
     </style>
-{% endblock %}
 
-{% block body %}
 <div class="dashboard-container">
     <div class="container">
         <!-- Messages Flash -->
@@ -258,14 +277,7 @@
             {% endfor %}
         {% endfor %}
 
-        <!-- Welcome Header -->
-        <div class="welcome-header">
-            <a href="{{ path('app_logout') }}" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>Logout
-            </a>
-            <h1>Welcome back, {{ user.name }}!</h1>
-            <p class="subtitle">Here's your activity overview</p>
-        </div>
+       
         
         <!-- Statistics -->
         <div class="stats-grid">
@@ -312,7 +324,6 @@
                 </div>
             </div>
         </div>
-        
         
     </div>
 </div>
