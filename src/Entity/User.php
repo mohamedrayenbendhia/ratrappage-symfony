@@ -34,6 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(type: 'string', length: 20)]
     #[\Symfony\Component\Validator\Constraints\Length(min: 3, max: 20, minMessage: 'Name must be at least {{ limit }} characters', maxMessage: 'Name cannot be longer than {{ limit }} characters')]
     #[\Symfony\Component\Validator\Constraints\NotBlank(message: 'Name is required')]
+    #[\Symfony\Component\Validator\Constraints\Regex(pattern: '/^[a-zA-ZÀ-ÿ\s]+$/', message: 'Name must contain only letters and spaces')]
     private $name;
 
     #[ORM\Column(type: 'string', length: 8)]
