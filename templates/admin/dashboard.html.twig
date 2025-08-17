@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard — User Statistics{% endblock %}
+
+{% block body %}
+<div class="container-fluid" style="background-color: #ffffff;">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block sidebar" style="min-height: 100vh; background-color: #2c3e50;">
+            <div class="sidebar-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" href="{{ path('app_admin_dashboard') }}" style="color: #ecf0f1 !important; background-color: #34495e; border-radius: 5px;">
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_user_index') }}" style="color: #ecf0f1 !important;">
+                            <i class="fas fa-users"></i> Manage Users
+                        </a>
+                    </li>
+                    {% if app.user and app.user.id %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_user_profile') }}" style="color: #ecf0f1 !important;">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_logout') }}" style="color: #ecf0f1 !important;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0" style="color: #2c3e50;">Admin Dashboard</h1>
+                    <a href="{{ path('app_user_index') }}" class="btn text-white" style="background-color: #2c3e50; border-color: #2c3e50;">
+                        <i class="fas fa-users"></i> Manage Users
+                    </a>
+                </div>
+
+                <!-- General Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 shadow-sm" style="background-color: #f8f9fa; border: 1px solid #e9ecef !important;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title" style="color: #6c757d;">Total Users</h5>
+                                <h2 class="display-6 mb-0" style="color: #2c3e50;">{{ generalStats.total }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 shadow-sm" style="background-color: #e8f5e8; border: 1px solid #c3e6c3 !important;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title" style="color: #6c757d;">Active Clients</h5>
+                                <h2 class="display-6 mb-0" style="color: #27ae60;">{{ generalStats.active }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 shadow-sm" style="background-color: #fff3cd; border: 1px solid #ffeaa7 !important;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title" style="color: #6c757d;">Administrators</h5>
+                                <h2 class="display-6 mb-0" style="color: #f39c12;">{{ generalStats.admins }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 shadow-sm" style="background-color: #f8d7da; border: 1px solid #f1c0c7 !important;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title" style="color: #6c757d;">Blocked Clients</h5>
+                                <h2 class="display-6 mb-0" style="color: #e74c3c;">{{ generalStats.blocked }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm" style="background-color: #ffffff; border: 1px solid #e9ecef !important;">
+                            <div class="card-header border-0" style="background-color: #f8f9fa;">
+                                <h5 class="card-title mb-0" style="color: #2c3e50;">Monthly User Evolution</h5>
+                            </div>
+                            <div class="card-body">
+                                <div style="position: relative; height: 400px;">
+                                    <canvas id="userChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // Wait for DOM to be loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Chart data from PHP
+        const chartData = {{ chartData|raw }};
+        const chartOptions = {{ chartOptions|raw }};
+        
+        // Load Chart.js via CDN
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js';
+        script.onload = function() {
+            // Create chart once Chart.js is loaded
+            const ctx = document.getElementById('userChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: chartOptions
+            });
+            console.log('Chart.js loaded and initialized successfully');
+        };
+        script.onerror = function() {
+            console.error('Failed to load Chart.js from CDN');
+            // Fallback: show error message
+            document.getElementById('userChart').innerHTML = '<p class="text-center text-muted">Chart loading error</p>';
+        };
+        document.head.appendChild(script);
+    });
+</script>
+{% endblock %}
