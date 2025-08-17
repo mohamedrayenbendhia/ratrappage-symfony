@@ -326,4 +326,74 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             'clients' => $totalUsers - (int) $admins,
         ];
     }
+
+    /**
+     * Estime le nombre de registrations pour le mois prochain basé sur la tendance
+     */
+    public function getNextMonthRegistrationEstimate(): array
+    {
+        $currentDate = new \DateTime();
+        
+        // Créer les dates de début et fin pour le mois actuel
+        $currentMonthStart = new \DateTime('first day of this month 00:00:00');
+        $currentMonthEnd = new \DateTime('last day of this month 23:59:59');
+        
+        // Créer les dates de début et fin pour le mois précédent
+        $previousMonthStart = new \DateTime('first day of last month 00:00:00');
+        $previousMonthEnd = new \DateTime('last day of last month 23:59:59');
+        
+        // Calculer le mois prochain pour les noms
+        $nextMonth = (int) $currentDate->format('n') + 1;
+        $nextYear = (int) $currentDate->format('Y');
+        if ($nextMonth > 12) {
+            $nextMonth = 1;
+            $nextYear++;
+        }
+
+        // Obtenir les registrations du mois actuel
+        $currentMonthUsers = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.createdAt >= :currentStart')
+            ->andWhere('u.createdAt <= :currentEnd')
+            ->setParameter('currentStart', $currentMonthStart)
+            ->setParameter('currentEnd', $currentMonthEnd)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // Obtenir les registrations du mois précédent
+        $previousMonthUsers = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.createdAt >= :previousStart')
+            ->andWhere('u.createdAt <= :previousEnd')
+            ->setParameter('previousStart', $previousMonthStart)
+            ->setParameter('previousEnd', $previousMonthEnd)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $currentMonthUsers = (int) $currentMonthUsers;
+        $previousMonthUsers = (int) $previousMonthUsers;
+
+        // Calculer le taux de croissance
+        $growthRate = 0;
+        if ($previousMonthUsers > 0) {
+            $growthRate = ($currentMonthUsers - $previousMonthUsers) / $previousMonthUsers;
+        }
+
+        // Estimer le mois prochain
+        $estimatedNextMonth = $currentMonthUsers * (1 + $growthRate);
+        $estimatedNextMonth = max(0, round($estimatedNextMonth)); // Pas de valeurs négatives
+
+        // Formater le nom du mois prochain
+        $nextMonthName = date('F', mktime(0, 0, 0, $nextMonth, 1, $nextYear));
+
+        return [
+            'current_month' => $currentMonthUsers,
+            'previous_month' => $previousMonthUsers,
+            'growth_rate' => round($growthRate * 100, 1), // En pourcentage
+            'estimated_next_month' => (int) $estimatedNextMonth,
+            'next_month_name' => $nextMonthName,
+            'next_month_number' => $nextMonth,
+            'next_year' => $nextYear
+        ];
+    }
 }

@@ -97,6 +97,7 @@ class AdminController extends AbstractController
             'chartData' => json_encode($chartData),
             'chartOptions' => json_encode($chartOptions),
             'generalStats' => $generalStats,
+            'estimationStats' => $userRepository->getNextMonthRegistrationEstimate(),
         ]);
     }
 }
