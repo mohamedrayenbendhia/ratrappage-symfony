@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +19,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class UserController extends AbstractController
 {
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
-    public function index(Request $request, UserRepository $userRepository, PaginatorInterface $paginator): Response
+    public function index(Request $request, UserRepository $userRepository, PaginationService $paginationService): Response
     {
         // Vérifier les permissions
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -29,6 +29,7 @@ class UserController extends AbstractController
         // Récupérer les paramètres de recherche
         $search = $request->query->get('search', '');
         $roleFilter = $request->query->get('role', '');
+        $page = $request->query->getInt('page', 1);
         
         // Créer la requête selon les permissions
         if (in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
@@ -40,11 +41,7 @@ class UserController extends AbstractController
         }
         
         // Pagination
-        $pagination = $paginator->paginate(
-            $queryBuilder,
-            $request->query->getInt('page', 1),
-            7 // 7 utilisateurs par page
-        );
+        $pagination = $paginationService->paginate($queryBuilder, $page, 7);
         
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,

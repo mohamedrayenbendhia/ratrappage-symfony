@@ -1,0 +1,36 @@
+/* User Management Custom Styles */
+.sidebar-custom {
+    background: linear-gradient(180deg, #0d1a3a 0%, #1e3c72 100%);
+    min-height: 100vh;
+}
+
+.sidebar-custom .nav-link {
+    color: #fff;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.sidebar-custom .nav-link:hover {
+    background: #1e3c72;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.card-header-custom {
+    background: linear-gradient(90deg, #0d1a3a 0%, #1e3c72 100%);
+    color: #fff;
+}
+
+.btn-primary-custom {
+    background: linear-gradient(90deg, #0d1a3a 0%, #1e3c72 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.search-form-custom {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
