@@ -373,14 +373,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $currentMonthUsers = (int) $currentMonthUsers;
         $previousMonthUsers = (int) $previousMonthUsers;
 
-        // Calculer le taux de croissance
+        // Calculer le taux de croissance avec une logique améliorée
         $growthRate = 0;
+        $estimatedNextMonth = $currentMonthUsers; // Par défaut, même niveau
+        
         if ($previousMonthUsers > 0) {
+            // Cas normal : calcul du taux de croissance
             $growthRate = ($currentMonthUsers - $previousMonthUsers) / $previousMonthUsers;
+            $estimatedNextMonth = $currentMonthUsers * (1 + $growthRate);
+        } elseif ($currentMonthUsers > 0) {
+            // Cas spécial : passage de 0 à un nombre positif
+            // On considère une croissance très élevée mais on limite l'estimation
+            $growthRate = 10; // 1000% de croissance symbolique
+            $estimatedNextMonth = $currentMonthUsers * 1.5; // Croissance modérée pour l'estimation
         }
-
-        // Estimer le mois prochain
-        $estimatedNextMonth = $currentMonthUsers * (1 + $growthRate);
+        
         $estimatedNextMonth = max(0, round($estimatedNextMonth)); // Pas de valeurs négatives
 
         // Formater le nom du mois prochain

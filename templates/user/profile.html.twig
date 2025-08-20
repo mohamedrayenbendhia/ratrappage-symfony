@@ -249,51 +249,8 @@
                 {% endfor %}
             {% endfor %}
             
-            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-                <div class="form-group">
-                    {{ form_label(form.imageFile, 'Profile Picture', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.imageFile) }}
-                    {% if form.imageFile.vars.help %}
-                        <div class="form-help">{{ form.imageFile.vars.help }}</div>
-                    {% else %}
-                        <div class="form-help">Accepted formats: JPEG, PNG, GIF. Max size: 5MB</div>
-                    {% endif %}
-                    <div class="image-preview" id="imagePreview" style="display: none;">
-                        <img id="previewImg" src="" alt="Preview">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.name, 'Name', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Your full name'}}) }}
-                    {{ form_errors(form.name) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'your@email.com'}}) }}
-                    {{ form_errors(form.email) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.phoneNumber, 'Phone', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': '12345678'}}) }}
-                    {{ form_errors(form.phoneNumber) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.plainPassword.first, 'New Password', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Leave blank to keep current password'}}) }}
-                    {{ form_errors(form.plainPassword.first) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.plainPassword.second, 'Confirm Password', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Repeat new password'}}) }}
-                    {{ form_errors(form.plainPassword.second) }}
-                </div>
-                
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+                {{ form_widget(form) }}
                 <button type="submit" class="btn-update">
                     <i class="fas fa-save"></i> Update Profile
                 </button>

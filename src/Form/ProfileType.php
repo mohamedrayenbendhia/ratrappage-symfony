@@ -68,19 +68,22 @@ class ProfileType extends AbstractType
                 'first_options' => [
                     'label' => 'New Password',
                     'attr' => [
+                        'class' => 'form-control',
                         'placeholder' => 'Leave blank to keep current password',
                         'autocomplete' => 'new-password'
                     ],
                     'constraints' => [
-                        new Length([
-                            'min' => 8,
-                            'minMessage' => 'Password must be at least {{ limit }} characters.',
-                        ]),
+                        new \Symfony\Component\Validator\Constraints\Callback(function ($value, $context) {
+                            if ($value !== null && $value !== '' && strlen($value) < 8) {
+                                $context->buildViolation('Password must be at least 8 characters.')->addViolation();
+                            }
+                        }),
                     ],
                 ],
                 'second_options' => [
                     'label' => 'Repeat New Password',
                     'attr' => [
+                        'class' => 'form-control',
                         'placeholder' => 'Repeat new password',
                         'autocomplete' => 'new-password'
                     ],

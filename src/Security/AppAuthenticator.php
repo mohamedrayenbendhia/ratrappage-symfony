@@ -96,11 +96,11 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 
         // Vérifier d'abord les rôles les plus élevés
         if (in_array('ROLE_SUPER_ADMIN', $roles)) {
-            return new RedirectResponse($this->urlGenerator->generate('app_user_index'));
+            return new RedirectResponse($this->urlGenerator->generate('app_admin_dashboard'));
         } 
         
         if (in_array('ROLE_ADMIN', $roles)) {
-            return new RedirectResponse($this->urlGenerator->generate('app_user_index'));
+            return new RedirectResponse($this->urlGenerator->generate('app_admin_dashboard'));
         }
         
         // Si l'utilisateur n'a que ROLE_USER, il va vers la page home client

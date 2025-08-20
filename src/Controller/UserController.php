@@ -157,12 +157,6 @@ class UserController extends AbstractController
                     // Re-créer le formulaire avec l'utilisateur original en cas d'erreur
                     $form = $this->createForm(\App\Form\ProfileType::class, $user);
                 }
-            } else {
-                // Formulaire soumis mais invalide selon Symfony - traiter comme un avertissement
-                $this->addFlash('warning', 'Please check your entries and try again.');
-                
-                // Re-créer le formulaire avec l'utilisateur original
-                $form = $this->createForm(\App\Form\ProfileType::class, $user);
             }
         }
 
